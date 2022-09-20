@@ -15,6 +15,7 @@
 #include "table/block_based/block_based_table_builder.h"
 #include "table/sst_file_writer_collectors.h"
 #include "test_util/sync_point.h"
+#include <terark/config.hpp> // for terark_flatten
 
 namespace ROCKSDB_NAMESPACE {
 
@@ -64,9 +65,10 @@ struct SstFileWriter::Rep {
   std::string db_session_id;
   uint64_t next_file_number = 1;
 
+  terark_flatten
   Status AddImpl(const Slice& user_key, const Slice& value,
                  ValueType value_type) {
-    if (!builder) {
+    if (UNLIKELY(!builder)) {
       return Status::InvalidArgument("File is not opened");
     }
 
